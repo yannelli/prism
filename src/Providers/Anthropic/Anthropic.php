@@ -30,7 +30,8 @@ class Anthropic extends Provider
     public function __construct(
         #[\SensitiveParameter] public readonly string $apiKey,
         public readonly string $apiVersion,
-        public readonly ?string $betaFeatures = null
+        public readonly ?string $betaFeatures = null,
+        public readonly string $baseUrl = 'https://api.anthropic.com/v1'
     ) {}
 
     #[\Override]
@@ -39,7 +40,8 @@ class Anthropic extends Provider
         $handler = new Text(
             $this->client(
                 $request->clientOptions(),
-                $request->clientRetry()
+                $request->clientRetry(),
+                $this->baseUrl
             ),
             $request
         );
@@ -53,7 +55,8 @@ class Anthropic extends Provider
         $handler = new Structured(
             $this->client(
                 $request->clientOptions(),
-                $request->clientRetry()
+                $request->clientRetry(),
+                $this->baseUrl
             ),
             $request
         );
@@ -66,7 +69,8 @@ class Anthropic extends Provider
     {
         $handler = new Stream($this->client(
             $request->clientOptions(),
-            $request->clientRetry()
+            $request->clientRetry(),
+            $this->baseUrl
         ));
 
         return $handler->handle($request);
@@ -101,6 +105,6 @@ class Anthropic extends Provider
             ]))
             ->withOptions($options)
             ->when($retry !== [], fn ($client) => $client->retry(...$retry))
-            ->baseUrl($baseUrl ?? 'https://api.anthropic.com/v1');
+            ->baseUrl($this->baseUrl);
     }
 }

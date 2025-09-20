@@ -105,6 +105,6 @@ class Anthropic extends Provider
             ]))
             ->withOptions($options)
             ->when($retry !== [], fn ($client) => $client->retry(...$retry))
-            ->baseUrl($this->baseUrl);
+            ->baseUrl($baseUrl);
     }
 }
